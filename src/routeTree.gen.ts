@@ -10,7 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as Play2DothtmlRouteImport } from './routes/play2[.]html'
-import { Route as PlayDothtmlRouteImport } from './routes/play[.]html'
+import { Route as PlayDotphpRouteImport } from './routes/play[.]php'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as SplatRouteImport } from './routes/$'
 import { Route as IndexRouteImport } from './routes/index'
@@ -23,9 +23,9 @@ const Play2DothtmlRoute = Play2DothtmlRouteImport.update({
   path: '/play2.html',
   getParentRoute: () => rootRouteImport,
 } as any)
-const PlayDothtmlRoute = PlayDothtmlRouteImport.update({
-  id: '/play.html',
-  path: '/play.html',
+const PlayDotphpRoute = PlayDotphpRouteImport.update({
+  id: '/play.php',
+  path: '/play.php',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminRoute = AdminRouteImport.update({
@@ -63,7 +63,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/$': typeof SplatRoute
   '/admin': typeof AdminRoute
-  '/play.html': typeof PlayDothtmlRoute
+  '/play.php': typeof PlayDotphpRoute
   '/play2.html': typeof Play2DothtmlRoute
   '/api/batches.json': typeof ApiBatchesDotjsonRoute
   '/s2cdn/$': typeof S2cdnSplatRoute
@@ -73,7 +73,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/$': typeof SplatRoute
   '/admin': typeof AdminRoute
-  '/play.html': typeof PlayDothtmlRoute
+  '/play.php': typeof PlayDotphpRoute
   '/play2.html': typeof Play2DothtmlRoute
   '/api/batches.json': typeof ApiBatchesDotjsonRoute
   '/s2cdn/$': typeof S2cdnSplatRoute
@@ -84,7 +84,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/$': typeof SplatRoute
   '/admin': typeof AdminRoute
-  '/play.html': typeof PlayDothtmlRoute
+  '/play.php': typeof PlayDotphpRoute
   '/play2.html': typeof Play2DothtmlRoute
   '/api/batches.json': typeof ApiBatchesDotjsonRoute
   '/s2cdn/$': typeof S2cdnSplatRoute
@@ -96,7 +96,7 @@ export interface FileRouteTypes {
     | '/'
     | '/$'
     | '/admin'
-    | '/play.html'
+    | '/play.php'
     | '/play2.html'
     | '/api/batches.json'
     | '/s2cdn/$'
@@ -106,7 +106,7 @@ export interface FileRouteTypes {
     | '/'
     | '/$'
     | '/admin'
-    | '/play.html'
+    | '/play.php'
     | '/play2.html'
     | '/api/batches.json'
     | '/s2cdn/$'
@@ -116,7 +116,7 @@ export interface FileRouteTypes {
     | '/'
     | '/$'
     | '/admin'
-    | '/play.html'
+    | '/play.php'
     | '/play2.html'
     | '/api/batches.json'
     | '/s2cdn/$'
@@ -127,7 +127,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   SplatRoute: typeof SplatRoute
   AdminRoute: typeof AdminRoute
-  PlayDothtmlRoute: typeof PlayDothtmlRoute
+  PlayDotphpRoute: typeof PlayDotphpRoute
   Play2DothtmlRoute: typeof Play2DothtmlRoute
   ApiBatchesDotjsonRoute: typeof ApiBatchesDotjsonRoute
   S2cdnSplatRoute: typeof S2cdnSplatRoute
@@ -143,11 +143,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Play2DothtmlRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/play.html': {
-      id: '/play.html'
-      path: '/play.html'
-      fullPath: '/play.html'
-      preLoaderRoute: typeof PlayDothtmlRouteImport
+    '/play.php': {
+      id: '/play.php'
+      path: '/play.php'
+      fullPath: '/play.php'
+      preLoaderRoute: typeof PlayDotphpRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin': {
@@ -199,7 +199,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   SplatRoute: SplatRoute,
   AdminRoute: AdminRoute,
-  PlayDothtmlRoute: PlayDothtmlRoute,
+  PlayDotphpRoute: PlayDotphpRoute,
   Play2DothtmlRoute: Play2DothtmlRoute,
   ApiBatchesDotjsonRoute: ApiBatchesDotjsonRoute,
   S2cdnSplatRoute: S2cdnSplatRoute,
@@ -208,13 +208,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
