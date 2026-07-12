@@ -4,46 +4,56 @@ export const Route = createFileRoute("/play.php")({
   server: {
     handlers: {
       GET: async ({ request }) => {
-        const {
-          extractClient,
-          checkBlocked,
-          getBlockMessage,
-          logAccess,
-          blockPageHtml,
-        } = await import("../lib/admin.server");
         const url = new URL(request.url);
-        const client = extractClient(request);
-        const batch_id =
-          url.searchParams.get("batch") ||
-          url.searchParams.get("batch_id") ||
-          undefined;
-        const video_id =
-          url.searchParams.get("vid") ||
-          url.searchParams.get("id") ||
-          url.searchParams.get("v") ||
-          undefined;
-        const video_name =
-          url.searchParams.get("name") ||
-          url.searchParams.get("title") ||
-          undefined;
 
-        const block = await checkBlocked({ client, batch_id });
-        void logAccess({
-          kind: "play",
-          path: url.pathname + url.search,
-          method: "GET",
-          client,
-          batch_id,
-          video_id,
-          video_name,
-          blocked: block.matched,
-        });
-        if (block.matched) {
-          const msg = block.message || (await getBlockMessage());
-          return new Response(blockPageHtml(msg), {
-            status: 403,
-            headers: { "content-type": "text/html; charset=utf-8" },
-          });
+        // Best-effort admin/block/logging — never let it break the player.
+        try {
+          const {
+            extractClient,
+            checkBlocked,
+            getBlockMessage,
+            logAccess,
+            blockPageHtml,
+          } = await import("../lib/admin.server");
+          const client = extractClient(request);
+          const batch_id =
+            url.searchParams.get("batch") ||
+            url.searchParams.get("batch_id") ||
+            undefined;
+          const video_id =
+            url.searchParams.get("vid") ||
+            url.searchParams.get("id") ||
+            url.searchParams.get("v") ||
+            undefined;
+          const video_name =
+            url.searchParams.get("name") ||
+            url.searchParams.get("title") ||
+            undefined;
+
+          const block = await checkBlocked({ client, batch_id }).catch(() => ({
+            matched: false as const,
+          }));
+          void logAccess({
+            kind: "play",
+            path: url.pathname + url.search,
+            method: "GET",
+            client,
+            batch_id,
+            video_id,
+            video_name,
+            blocked: block.matched,
+          }).catch(() => {});
+          if (block.matched) {
+            const msg =
+              ("message" in block && block.message) ||
+              (await getBlockMessage().catch(() => "Access denied."));
+            return new Response(blockPageHtml(msg), {
+              status: 403,
+              headers: { "content-type": "text/html; charset=utf-8" },
+            });
+          }
+        } catch (e) {
+          console.error("[play.php] admin layer failed, continuing", e);
         }
 
         const target = `/vidcloud/play.php${url.search}`;
