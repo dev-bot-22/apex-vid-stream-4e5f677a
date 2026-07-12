@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/play.html")({
+export const Route = createFileRoute("/play.php")({
   server: {
     handlers: {
       GET: async ({ request }) => {
