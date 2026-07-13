@@ -12,8 +12,8 @@ export const Route = createFileRoute("/vidcloud/$")({
       }) => {
         const { proxyUpstream } = await import("../lib/player-upstream.server");
         return proxyUpstream(request, params._splat ?? "", {
-          upstream: "https://vidcloud.eu.org",
-          host: "vidcloud.eu.org",
+          upstream: "https://studystark.testwave.cc",
+          host: "studystark.testwave.cc",
           prefix: "/vidcloud",
         });
       };
