@@ -56,7 +56,11 @@ export const Route = createFileRoute("/play.php")({
           console.error("[play.php] admin layer failed, continuing", e);
         }
 
-        const target = `/vidcloud/play.php${url.search}`;
+        // Load the player from the upstream origin directly. The DASH/HLS stream
+        // decryption and CDN referer checks are tied to the upstream hostname —
+        // proxying it breaks playback ("DASH stream error"). The iframe still keeps
+        // the top-level URL as /play.php on our domain.
+        const target = `https://studystark.testwave.cc/play.php${url.search}`;
         const safeTarget = target.replace(/"/g, "&quot;");
         const html = `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Player</title><style>html,body{margin:0;padding:0;background:#000;overflow:hidden;width:100%;height:100%}iframe{margin:0;padding:0;border:0;width:100%;height:100%;background:#000;display:block}</style></head><body><iframe id="player" src="${safeTarget}" allow="encrypted-media; autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe><script>
 (function(){
